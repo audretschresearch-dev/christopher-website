@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog'))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.posted.valueOf() - a.data.posted.valueOf());
+---
+
+<BaseLayout title="Writing | Christopher Audretsch">
+  <div class="max-w-3xl mx-auto px-6 py-16">
+    <h1 class="font-serif text-4xl font-semibold text-text mb-10">Writing</h1>
+
+    {posts.length === 0 ? (
+      <p class="text-text/60">No posts yet. Check back soon!</p>
+    ) : (
+      <div class="space-y-10">
+        {posts.map((post) => (
+          <PostCard
+            title={post.data.title}
+            href={`/blog/${post.slug}`}
+            date={post.data.posted}
+            description={post.data.description}
+          />
+        ))}
+      </div>
+    )}
+  </div>
+</BaseLayout>

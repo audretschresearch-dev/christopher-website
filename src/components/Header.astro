@@ -1,0 +1,38 @@
+---
+const currentPath = Astro.url.pathname;
+
+const navLinks = [
+  { href: '/', label: 'Home' },
+  { href: '/blog', label: 'Miscellaneous Writing' },
+  { href: '/memetics', label: 'Memetics' },
+  { href: '/older', label: 'Older Writings' },
+  { href: '/about', label: 'About' },
+];
+---
+
+<header class="bg-header-bg border-b border-gray-200">
+  <div class="max-w-3xl mx-auto px-6 py-6">
+    <nav class="flex items-center justify-between">
+      <a href="/" class="font-serif text-2xl font-semibold text-text hover:text-accent transition-colors">
+        Christopher
+      </a>
+      <ul class="flex gap-8">
+        {navLinks.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              class:list={[
+                'text-sm font-medium transition-colors',
+                currentPath === link.href || (link.href !== '/' && currentPath.startsWith(link.href))
+                  ? 'text-accent'
+                  : 'text-text/70 hover:text-text',
+              ]}
+            >
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</header>

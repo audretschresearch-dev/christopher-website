@@ -1,0 +1,82 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog'))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.posted.valueOf() - a.data.posted.valueOf())
+  .slice(0, 5);
+
+const memeticsPosts = (await getCollection('memetics'))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => a.data.part - b.data.part);
+---
+
+<BaseLayout title="Christopher Audretsch">
+  <div class="max-w-3xl mx-auto px-6 py-16">
+    <section class="mb-16">
+      <img
+        src="/always-has-been.jpg"
+        alt="Always has been meme"
+        class="w-full rounded-lg mb-8"
+      />
+      <h1 class="font-serif text-4xl font-semibold text-text mb-6">
+        Christopher Audretsch
+      </h1>
+      <p class="text-lg text-text/80 leading-relaxed">
+        I'm interested in memetics, ASI outcomes, and various things in philosophy.
+        My professional background is in trading; I worked as a discretionary trader
+        for three years at a firm in Chicago. I currently live in beautiful Berkeley.
+      </p>
+      <a
+        href="/about"
+        class="inline-block mt-4 text-accent hover:underline"
+      >
+        More about me &rarr;
+      </a>
+    </section>
+
+    <section class="mb-16">
+      <h2 class="font-serif text-2xl font-semibold text-text mb-8">Memetics</h2>
+      <div class="space-y-8">
+        {memeticsPosts.map((post) => (
+          <PostCard
+            title={post.data.title}
+            href={`/memetics/${post.slug}`}
+            date={post.data.posted}
+            description={post.data.description}
+          />
+        ))}
+      </div>
+      <a
+        href="/memetics"
+        class="inline-block mt-10 text-accent hover:underline"
+      >
+        View all &rarr;
+      </a>
+    </section>
+
+    <section>
+      <h2 class="font-serif text-2xl font-semibold text-text mb-8">Recent Writing</h2>
+      <div class="space-y-8">
+        {posts.map((post) => (
+          <PostCard
+            title={post.data.title}
+            href={`/blog/${post.slug}`}
+            date={post.data.posted}
+            description={post.data.description}
+          />
+        ))}
+      </div>
+      {posts.length > 0 && (
+        <a
+          href="/blog"
+          class="inline-block mt-10 text-accent hover:underline"
+        >
+          View all posts &rarr;
+        </a>
+      )}
+    </section>
+  </div>
+</BaseLayout>

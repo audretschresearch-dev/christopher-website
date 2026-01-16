@@ -1,0 +1,165 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PasswordGate from '../../components/PasswordGate.astro';
+import { getCollection } from 'astro:content';
+
+const notes = await getCollection('notes');
+
+// Group notes by source
+const notesBySource = notes.reduce((acc, note) => {
+  const source = note.data.source;
+  if (!acc[source]) acc[source] = [];
+  acc[source].push(note);
+  return acc;
+}, {} as Record<string, typeof notes>);
+
+// For Google Docs, also group by folder
+type NoteType = typeof notes[0];
+const googleDocsByFolder: Record<string, NoteType[]> = {};
+if (notesBySource['Google Docs']) {
+  notesBySource['Google Docs'].forEach((note) => {
+    const folder = note.data.folder || 'Uncategorized';
+    if (!googleDocsByFolder[folder]) googleDocsByFolder[folder] = [];
+    googleDocsByFolder[folder].push(note);
+  });
+}
+
+// Sort folders alphabetically, with "Uncategorized" at the end
+const folderOrder = Object.keys(googleDocsByFolder).sort((a, b) => {
+  if (a === 'Uncategorized') return 1;
+  if (b === 'Uncategorized') return -1;
+  return a.localeCompare(b);
+});
+
+// Sort notes within each folder by date
+Object.values(googleDocsByFolder).forEach((group) => {
+  group.sort((a, b) => {
+    const dateA = a.data.modified || a.data.created || new Date(0);
+    const dateB = b.data.modified || b.data.created || new Date(0);
+    return dateB.valueOf() - dateA.valueOf();
+  });
+});
+
+// Sort each source group by date (modified or created)
+Object.values(notesBySource).forEach((group) => {
+  group.sort((a, b) => {
+    const dateA = a.data.modified || a.data.created || new Date(0);
+    const dateB = b.data.modified || b.data.created || new Date(0);
+    return dateB.valueOf() - dateA.valueOf();
+  });
+});
+
+const sourceOrder = ['Google Docs', 'LessWrong', 'Notion'];
+const sources = sourceOrder.filter((s) => notesBySource[s]?.length > 0);
+
+// Add any sources not in the predefined order
+Object.keys(notesBySource).forEach((source) => {
+  if (!sources.includes(source)) {
+    sources.push(source);
+  }
+});
+---
+
+<BaseLayout title="Notes | Christopher Audretsch">
+  <div class="max-w-3xl mx-auto px-6 py-16">
+    <PasswordGate>
+      <h1 class="font-serif text-4xl font-semibold text-text mb-4">Notes</h1>
+      <p class="text-text/60 mb-10">
+        Personal notes, drafts, and collected writings. {notes.length} items total.
+      </p>
+
+      <div class="flex flex-wrap gap-2 mb-10">
+        {sources.map((source) => (
+          <a
+            href={`#${source.toLowerCase().replace(/\s+/g, '-')}`}
+            class="text-sm px-3 py-1.5 bg-header-bg rounded-full text-text/70 hover:text-accent transition-colors"
+          >
+            {source} ({notesBySource[source].length})
+          </a>
+        ))}
+      </div>
+
+      {sources.map((source) => (
+        <section id={source.toLowerCase().replace(/\s+/g, '-')} class="mb-12">
+          <h2 class="font-serif text-xl font-semibold text-text mb-6 pb-2 border-b border-gray-200">
+            {source}
+          </h2>
+
+          {source === 'Google Docs' ? (
+            /* Show Google Docs organized by folder */
+            <div class="space-y-8">
+              {folderOrder.map((folder) => (
+                <div>
+                  <h3 class="text-sm font-medium text-text/60 mb-3 flex items-center gap-2">
+                    <span class="text-accent">📁</span> {folder}
+                    <span class="text-text/40">({googleDocsByFolder[folder].length})</span>
+                  </h3>
+                  <ul class="space-y-2 pl-5 border-l-2 border-gray-100">
+                    {googleDocsByFolder[folder].map((note) => {
+                      const displayDate = note.data.modified || note.data.created;
+                      return (
+                        <li>
+                          <a
+                            href={`/notes/${note.slug}`}
+                            class="group flex items-baseline justify-between gap-4"
+                          >
+                            <span class="text-text group-hover:text-accent transition-colors truncate">
+                              {note.data.title}
+                            </span>
+                            {displayDate && (
+                              <time
+                                class="text-xs text-text/40 whitespace-nowrap"
+                                datetime={displayDate.toISOString()}
+                              >
+                                {displayDate.toLocaleDateString('en-US', {
+                                  month: 'short',
+                                  day: 'numeric',
+                                  year: 'numeric',
+                                })}
+                              </time>
+                            )}
+                          </a>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          ) : (
+            /* Show other sources as flat list */
+            <ul class="space-y-3">
+              {notesBySource[source].map((note) => {
+                const displayDate = note.data.modified || note.data.created;
+                return (
+                  <li>
+                    <a
+                      href={`/notes/${note.slug}`}
+                      class="group flex items-baseline justify-between gap-4"
+                    >
+                      <span class="text-text group-hover:text-accent transition-colors truncate">
+                        {note.data.title}
+                      </span>
+                      {displayDate && (
+                        <time
+                          class="text-xs text-text/40 whitespace-nowrap"
+                          datetime={displayDate.toISOString()}
+                        >
+                          {displayDate.toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric',
+                          })}
+                        </time>
+                      )}
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </section>
+      ))}
+    </PasswordGate>
+  </div>
+</BaseLayout>

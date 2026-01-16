@@ -1,0 +1,30 @@
+---
+import { getCollection } from 'astro:content';
+import NotesLayout from '../../layouts/NotesLayout.astro';
+import PasswordGate from '../../components/PasswordGate.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const notes = await getCollection('notes');
+  return notes.map((note) => ({
+    params: { slug: note.slug },
+    props: { note },
+  }));
+}
+
+const { note } = Astro.props;
+const { Content } = await note.render();
+---
+
+<BaseLayout title={`${note.data.title} | Notes`}>
+  <PasswordGate>
+    <NotesLayout
+      title={note.data.title}
+      source={note.data.source}
+      created={note.data.created}
+      modified={note.data.modified}
+    >
+      <Content />
+    </NotesLayout>
+  </PasswordGate>
+</BaseLayout>

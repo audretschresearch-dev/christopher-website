@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply bg-background text-text;
+  }
+
+  body {
+    @apply font-sans antialiased;
+  }
+
+  /* Footnote styling */
+  .footnotes {
+    @apply mt-12 pt-8 border-t border-gray-200 text-sm;
+  }
+
+  .footnotes ol {
+    @apply list-decimal pl-6 space-y-2;
+  }
+
+  .footnotes li {
+    @apply text-gray-600;
+  }
+
+  .footnote-ref {
+    @apply text-accent text-xs align-super no-underline;
+  }
+
+  .footnote-backref {
+    @apply text-accent no-underline ml-1;
+  }
+
+  /* Code block styling */
+  pre {
+    @apply rounded-lg p-4 overflow-x-auto text-sm;
+  }
+
+  code {
+    @apply bg-gray-100 px-1.5 py-0.5 rounded text-sm;
+  }
+
+  pre code {
+    @apply bg-transparent p-0;
+  }
+}
