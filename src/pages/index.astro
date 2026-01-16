@@ -14,14 +14,14 @@ const memeticsPosts = (await getCollection('memetics'))
 ---
 
 <BaseLayout title="Christopher Audretsch">
-  <div class="max-w-3xl mx-auto px-6 py-16">
-    <section class="mb-16">
+  <div class="max-w-3xl mx-auto px-6 py-8 md:py-16">
+    <section class="mb-10 md:mb-16">
       <img
         src="/always-has-been.jpg"
         alt="Always has been meme"
-        class="w-full rounded-lg mb-8"
+        class="w-full rounded-lg mb-6 md:mb-8"
       />
-      <h1 class="font-serif text-4xl font-semibold text-text mb-6">
+      <h1 class="font-serif text-3xl md:text-4xl font-semibold text-text mb-4 md:mb-6">
         Christopher Audretsch
       </h1>
       <p class="text-lg text-text/80 leading-relaxed">
@@ -37,8 +37,8 @@ const memeticsPosts = (await getCollection('memetics'))
       </a>
     </section>
 
-    <section class="mb-16">
-      <h2 class="font-serif text-2xl font-semibold text-text mb-8">Memetics</h2>
+    <section class="mb-10 md:mb-16">
+      <h2 class="font-serif text-xl md:text-2xl font-semibold text-text mb-6 md:mb-8">Memetics</h2>
       <div class="space-y-8">
         {memeticsPosts.map((post) => (
           <PostCard
@@ -58,7 +58,7 @@ const memeticsPosts = (await getCollection('memetics'))
     </section>
 
     <section>
-      <h2 class="font-serif text-2xl font-semibold text-text mb-8">Recent Writing</h2>
+      <h2 class="font-serif text-xl md:text-2xl font-semibold text-text mb-6 md:mb-8">Recent Writing</h2>
       <div class="space-y-8">
         {posts.map((post) => (
           <PostCard

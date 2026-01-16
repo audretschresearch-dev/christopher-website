@@ -46,4 +46,19 @@
   pre code {
     @apply bg-transparent p-0;
   }
+
+  /* Mobile-friendly images */
+  .prose img {
+    @apply max-w-full h-auto rounded-lg;
+  }
+
+  /* Ensure tables scroll on mobile */
+  .prose table {
+    @apply block overflow-x-auto whitespace-nowrap;
+  }
+
+  /* Better blockquote on mobile */
+  .prose blockquote {
+    @apply text-base md:text-lg;
+  }
 }
