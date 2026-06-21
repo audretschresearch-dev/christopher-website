@@ -70,6 +70,10 @@ const linkClass = (href: string) =>
         </li>
 
         <li>
+          <a href="/waluigi" class:list={['text-sm font-medium transition-colors', linkClass('/waluigi')]}>Waluigi</a>
+        </li>
+
+        <li>
           <a href="/about" class:list={['text-sm font-medium transition-colors', linkClass('/about')]}>About</a>
         </li>
       </ul>
@@ -106,6 +110,9 @@ const linkClass = (href: string) =>
               </li>
             ))}
           </ul>
+        </li>
+        <li class="pt-1">
+          <a href="/waluigi" class:list={['block text-base font-medium transition-colors py-1', linkClass('/waluigi')]}>Waluigi</a>
         </li>
         <li class="pt-1">
           <a href="/about" class:list={['block text-base font-medium transition-colors py-1', linkClass('/about')]}>About</a>
