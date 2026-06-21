@@ -5,8 +5,8 @@ export default {
     extend: {
       colors: {
         accent: '#3872e9',
-        background: '#faf8f8',
-        'header-bg': '#f1efef',
+        background: '#f6f1e7',
+        'header-bg': '#efe8da',
         text: '#232221',
       },
       fontFamily: {
