@@ -2,6 +2,7 @@
 title: "PSA: Predictions markets often have very low liquidity; be careful citing them."
 posted: 2026-03-16T21:07:17.499Z
 source: LessWrong
+tags: ["HQ"]
 draft: false
 ---
 
