@@ -29,6 +29,17 @@ const aiPosts = aiFeatured
   .map((slug) => allAi.find((p) => p.slug === slug))
   .filter(Boolean);
 
+const memeticsPosts = (await getCollection('memetics'))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => {
+    const ap = a.data.part, bp = b.data.part;
+    if (ap != null && bp != null) return ap - bp;
+    if (ap != null) return -1;
+    if (bp != null) return 1;
+    return b.data.posted.valueOf() - a.data.posted.valueOf();
+  })
+  .slice(0, 5);
+
 const cyborgPosts = (await getCollection('cyborg-evals'))
   .filter((post) => !post.data.draft)
   .sort((a, b) => b.data.posted.valueOf() - a.data.posted.valueOf())
@@ -96,6 +107,29 @@ const cyborgPosts = (await getCollection('cyborg-evals'))
         </div>
         <a
           href="/ai"
+          class="inline-block mt-10 text-accent hover:underline"
+        >
+          View all &rarr;
+        </a>
+      </section>
+    )}
+
+    {memeticsPosts.length > 0 && (
+      <section class="mb-10 md:mb-16">
+        <h2 class="font-serif text-xl md:text-2xl font-semibold text-text mb-6 md:mb-8">Memetics</h2>
+        <div class="space-y-8">
+          {memeticsPosts.map((post) => (
+            <PostCard
+              title={post.data.title}
+              href={`/memetics/${post.slug}`}
+              date={post.data.posted}
+              description={post.data.description}
+              tags={post.data.tags}
+            />
+          ))}
+        </div>
+        <a
+          href="/memetics"
           class="inline-block mt-10 text-accent hover:underline"
         >
           View all &rarr;
