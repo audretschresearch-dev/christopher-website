@@ -32,6 +32,17 @@ const older = defineCollection({
   }),
 });
 
+const philosophy = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    posted: z.coerce.date(),
+    description: z.string().optional(),
+    draft: z.boolean().default(false),
+    source: z.string().optional(),
+  }),
+});
+
 const notes = defineCollection({
   type: 'content',
   schema: z.object({
@@ -45,4 +56,4 @@ const notes = defineCollection({
   }),
 });
 
-export const collections = { blog, memetics, older, notes };
+export const collections = { blog, memetics, older, notes, philosophy };

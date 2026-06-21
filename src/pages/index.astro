@@ -11,6 +11,11 @@ const posts = (await getCollection('blog'))
 const memeticsPosts = (await getCollection('memetics'))
   .filter((post) => !post.data.draft)
   .sort((a, b) => a.data.part - b.data.part);
+
+const philosophyPosts = (await getCollection('philosophy'))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.posted.valueOf() - a.data.posted.valueOf())
+  .slice(0, 5);
 ---
 
 <BaseLayout title="Christopher Audretsch">
@@ -56,6 +61,28 @@ const memeticsPosts = (await getCollection('memetics'))
         View all &rarr;
       </a>
     </section>
+
+    {philosophyPosts.length > 0 && (
+      <section class="mb-10 md:mb-16">
+        <h2 class="font-serif text-xl md:text-2xl font-semibold text-text mb-6 md:mb-8 tracking-[0.35em]">Philosophy</h2>
+        <div class="space-y-8">
+          {philosophyPosts.map((post) => (
+            <PostCard
+              title={post.data.title}
+              href={`/philosophy/${post.slug}`}
+              date={post.data.posted}
+              description={post.data.description}
+            />
+          ))}
+        </div>
+        <a
+          href="/philosophy"
+          class="inline-block mt-10 text-accent hover:underline"
+        >
+          View all &rarr;
+        </a>
+      </section>
+    )}
 
     <section>
       <h2 class="font-serif text-xl md:text-2xl font-semibold text-text mb-6 md:mb-8">Recent Writing</h2>
