@@ -22,6 +22,7 @@ const posts = (await getCollection('blog'))
             href={`/blog/${post.slug}`}
             date={post.data.posted}
             description={post.data.description}
+            tags={post.data.tags}
           />
         ))}
       </div>

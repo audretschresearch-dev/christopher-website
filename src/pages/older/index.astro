@@ -24,6 +24,7 @@ const posts = (await getCollection('older'))
             title={post.data.title}
             href={`/older/${post.slug}`}
             description={post.data.description}
+            tags={post.data.tags}
           />
         ))}
       </div>
