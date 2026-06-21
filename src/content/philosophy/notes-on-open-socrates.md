@@ -1,5 +1,5 @@
 ---
-title: "Notes on the Fundamental Question"
+title: "Notes on Open Socrates"
 posted: 2026-01-11T00:00:00.000Z
 source: Google Docs
 draft: false
