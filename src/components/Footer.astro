@@ -7,18 +7,16 @@ const socials = [
 ];
 ---
 
-<footer class="border-t border-gray-200 mt-auto">
-  <div class="max-w-3xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-3">
-    <p class="text-sm text-text/50">
-      &copy; {year} Christopher Audretsch
-    </p>
+<footer class="site-footer max-w-home mx-auto mt-12 px-5 sm:px-6 py-8 border-t border-rule text-[0.88rem] text-muted">
+  <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+    <p>&copy; {year} Christopher Audretsch</p>
     <div class="flex items-center gap-5">
       {socials.map((s) => (
         <a
           href={s.href}
           target="_blank"
           rel="noopener noreferrer"
-          class="text-sm font-medium text-text/60 hover:text-accent transition-colors"
+          class="text-muted hover:text-text transition-colors"
         >
           {s.label}
         </a>

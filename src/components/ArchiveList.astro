@@ -1,0 +1,48 @@
+---
+import TagList from './TagList.astro';
+
+interface Post {
+  data: {
+    title: string;
+    posted?: Date;
+    description?: string;
+    tags?: string[];
+    externalUrl?: string;
+  };
+  slug: string;
+}
+
+interface Props {
+  base: string;       // e.g. "/philosophy"
+  posts: Post[];
+}
+
+const { base, posts } = Astro.props;
+
+const fmt = (d?: Date) =>
+  d ? d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : null;
+---
+
+<div class="border-t border-rule">
+  {posts.map((post) => {
+    const external = !!post.data.externalUrl;
+    const href = post.data.externalUrl ?? `${base}/${post.slug}`;
+    const attrs = external ? { target: '_blank', rel: 'noopener noreferrer' } : {};
+    return (
+      <a href={href} class="group block no-underline py-4 border-b border-rule" {...attrs}>
+        <span class="font-serif text-lg md:text-xl text-text group-hover:text-accent group-hover:underline underline-offset-[3px] transition-colors">
+          {post.data.title}{external && <span class="text-muted text-base font-normal"> ↗</span>}
+        </span>
+        <span class="post-meta flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
+          {fmt(post.data.posted) && (
+            <span class="text-muted text-[0.88rem] tabular-nums">{fmt(post.data.posted)}</span>
+          )}
+          {post.data.tags && post.data.tags.length > 0 && <TagList tags={post.data.tags} />}
+        </span>
+        {post.data.description && (
+          <p class="text-muted text-[0.95rem] mt-1.5 leading-relaxed">{post.data.description}</p>
+        )}
+      </a>
+    );
+  })}
+</div>

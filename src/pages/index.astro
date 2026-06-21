@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PostCard from '../components/PostCard.astro';
+import ShelfSection from '../components/ShelfSection.astro';
 import { getCollection } from 'astro:content';
 
 const posts = (await getCollection('blog'))
@@ -47,140 +47,42 @@ const cyborgPosts = (await getCollection('cyborg-evals'))
 ---
 
 <BaseLayout title="Christopher Audretsch">
-  <div class="max-w-3xl mx-auto px-6 py-8 md:py-16">
-    <section class="mb-10 md:mb-16">
+  <div class="max-w-home mx-auto px-5 sm:px-6 py-8 md:py-14">
+    <!-- Hero / frontispiece -->
+    <section class="mb-14 pb-10 border-b border-rule">
       <img
         src="/always-has-been.jpg"
         alt="Always has been meme"
-        class="w-full rounded-lg mb-6 md:mb-8"
+        class="w-full max-w-[360px] rounded-md mb-6"
       />
-      <h1 class="font-serif text-3xl md:text-4xl font-semibold text-text mb-4 md:mb-6">
+      <h1 class="font-serif font-semibold text-text leading-[0.95] tracking-[-0.055em] text-[clamp(2.2rem,6vw,4.25rem)] mb-3">
         Christopher Audretsch
       </h1>
-      <p class="text-lg text-text/80 leading-relaxed">
+      <p class="text-muted text-xl">
         I'm curious.
       </p>
       <a
         href="/about"
-        class="inline-block mt-4 text-accent hover:underline"
+        class="post-meta inline-block mt-4 text-accent hover:underline underline-offset-[3px]"
       >
         More about me &rarr;
       </a>
     </section>
 
     {philosophyPosts.length > 0 && (
-      <section class="mb-10 md:mb-16">
-        <h2 class="font-serif text-xl md:text-2xl font-semibold text-text mb-6 md:mb-8 tracking-[0.35em]">Philosophy</h2>
-        <div class="space-y-8">
-          {philosophyPosts.map((post) => (
-            <PostCard
-              title={post.data.title}
-              href={`/philosophy/${post.slug}`}
-              date={post.data.posted}
-              description={post.data.description}
-              tags={post.data.tags}
-            />
-          ))}
-        </div>
-        <a
-          href="/philosophy"
-          class="inline-block mt-10 text-accent hover:underline"
-        >
-          View all &rarr;
-        </a>
-      </section>
+      <ShelfSection heading="Philosophy" base="/philosophy" posts={philosophyPosts} />
     )}
-
     {aiPosts.length > 0 && (
-      <section class="mb-10 md:mb-16">
-        <h2 class="font-serif text-xl md:text-2xl font-semibold text-text mb-6 md:mb-8">AI</h2>
-        <div class="space-y-8">
-          {aiPosts.map((post) => (
-            <PostCard
-              title={post.data.title}
-              href={`/ai/${post.slug}`}
-              date={post.data.posted}
-              description={post.data.description}
-              tags={post.data.tags}
-            />
-          ))}
-        </div>
-        <a
-          href="/ai"
-          class="inline-block mt-10 text-accent hover:underline"
-        >
-          View all &rarr;
-        </a>
-      </section>
+      <ShelfSection heading="AI" base="/ai" posts={aiPosts} />
     )}
-
     {memeticsPosts.length > 0 && (
-      <section class="mb-10 md:mb-16">
-        <h2 class="font-serif text-xl md:text-2xl font-semibold text-text mb-6 md:mb-8">Memetics</h2>
-        <div class="space-y-8">
-          {memeticsPosts.map((post) => (
-            <PostCard
-              title={post.data.title}
-              href={`/memetics/${post.slug}`}
-              date={post.data.posted}
-              description={post.data.description}
-              tags={post.data.tags}
-            />
-          ))}
-        </div>
-        <a
-          href="/memetics"
-          class="inline-block mt-10 text-accent hover:underline"
-        >
-          View all &rarr;
-        </a>
-      </section>
+      <ShelfSection heading="Memetics" base="/memetics" posts={memeticsPosts} />
     )}
-
     {cyborgPosts.length > 0 && (
-      <section class="mb-10 md:mb-16">
-        <h2 class="font-serif text-xl md:text-2xl font-semibold text-text mb-6 md:mb-8">Cyborg Evals</h2>
-        <div class="space-y-8">
-          {cyborgPosts.map((post) => (
-            <PostCard
-              title={post.data.title}
-              href={`/cyborg-evals/${post.slug}`}
-              date={post.data.posted}
-              description={post.data.description}
-              tags={post.data.tags}
-            />
-          ))}
-        </div>
-        <a
-          href="/cyborg-evals"
-          class="inline-block mt-10 text-accent hover:underline"
-        >
-          View all &rarr;
-        </a>
-      </section>
+      <ShelfSection heading="Cyborg Evals" base="/cyborg-evals" posts={cyborgPosts} />
     )}
-
-    <section>
-      <h2 class="font-serif text-xl md:text-2xl font-semibold text-text mb-6 md:mb-8">Recent Writing</h2>
-      <div class="space-y-8">
-        {posts.map((post) => (
-          <PostCard
-            title={post.data.title}
-            href={`/blog/${post.slug}`}
-            date={post.data.posted}
-            description={post.data.description}
-            tags={post.data.tags}
-          />
-        ))}
-      </div>
-      {posts.length > 0 && (
-        <a
-          href="/blog"
-          class="inline-block mt-10 text-accent hover:underline"
-        >
-          View all posts &rarr;
-        </a>
-      )}
-    </section>
+    {posts.length > 0 && (
+      <ShelfSection heading="Recent Writing" base="/blog" posts={posts} viewAllLabel="View all posts" />
+    )}
   </div>
 </BaseLayout>

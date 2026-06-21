@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import PostCard from '../../components/PostCard.astro';
+import ArchiveList from '../../components/ArchiveList.astro';
 import { getCollection } from 'astro:content';
 
 const posts = (await getCollection('trip-reports'))
@@ -9,27 +9,16 @@ const posts = (await getCollection('trip-reports'))
 ---
 
 <BaseLayout title="Event Trip Reports | Christopher Audretsch">
-  <div class="max-w-3xl mx-auto px-6 py-8 md:py-16">
-    <h1 class="font-serif text-3xl md:text-4xl font-semibold text-text mb-3 md:mb-4">Event Trip Reports</h1>
-    <p class="text-text/60 mb-8 md:mb-10">
-      Notes from events and trips. These link out to private Google Docs.
+  <div class="max-w-reading mx-auto px-5 sm:px-6 py-10 md:py-14">
+    <h1 class="font-serif font-semibold text-text text-[2.4rem] tracking-[-0.045em] mb-2">Event Trip Reports</h1>
+    <p class="post-meta text-muted text-[1.05rem] mb-8">
+      Notes from events and trips. Some link out to private Google Docs.
     </p>
 
     {posts.length === 0 ? (
-      <p class="text-text/60">No reports yet. Check back soon!</p>
+      <p class="text-muted">No reports yet. Check back soon!</p>
     ) : (
-      <div class="space-y-10">
-        {posts.map((post) => (
-          <PostCard
-            title={post.data.title}
-            href={post.data.externalUrl ?? `/trip-reports/${post.slug}`}
-            external={!!post.data.externalUrl}
-            date={post.data.posted}
-            description={post.data.description}
-            tags={post.data.tags}
-          />
-        ))}
-      </div>
+      <ArchiveList base="/trip-reports" posts={posts} />
     )}
   </div>
 </BaseLayout>

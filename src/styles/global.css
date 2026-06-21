@@ -9,13 +9,14 @@
     @apply bg-background text-text;
   }
 
+  /* Bookish serif body; nav/metadata/footer opt back into sans below. */
   body {
-    @apply font-sans antialiased;
+    @apply font-serif antialiased;
   }
 
   /* Footnote styling */
   .footnotes {
-    @apply mt-12 pt-8 border-t border-gray-200 text-sm;
+    @apply mt-12 pt-8 border-t border-rule text-sm;
   }
 
   .footnotes ol {
@@ -23,7 +24,7 @@
   }
 
   .footnotes li {
-    @apply text-gray-600;
+    @apply text-muted;
   }
 
   .footnote-ref {
@@ -47,18 +48,23 @@
     @apply bg-transparent p-0;
   }
 
-  /* Mobile-friendly images */
-  .prose img {
-    @apply max-w-full h-auto rounded-lg;
+  /* Images: intentionally placed, consistent treatment */
+  main img {
+    @apply max-w-full h-auto rounded-md border border-rule;
   }
 
   /* Ensure tables scroll on mobile */
   .prose table {
     @apply block overflow-x-auto whitespace-nowrap;
   }
+}
 
-  /* Better blockquote on mobile */
-  .prose blockquote {
-    @apply text-base md:text-lg;
+@layer components {
+  /* Clean sans for navigation, metadata, and footer */
+  .site-nav,
+  .metadata,
+  .post-meta,
+  .site-footer {
+    @apply font-sans;
   }
 }

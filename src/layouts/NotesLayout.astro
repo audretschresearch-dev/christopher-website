@@ -18,18 +18,18 @@ const formattedDate = displayDate
   : null;
 ---
 
-<article class="max-w-3xl mx-auto px-6 py-12">
+<article class="max-w-article mx-auto px-5 sm:px-6 py-10 md:py-14">
   <header class="mb-10">
     <div class="flex items-center gap-3 mb-4">
-      <span class="text-xs font-medium uppercase tracking-wider text-accent bg-accent/10 px-2 py-1 rounded">
+      <span class="post-meta text-xs font-medium uppercase tracking-wider text-accent bg-accent-soft px-2 py-1 rounded">
         {source}
       </span>
     </div>
-    <h1 class="font-serif text-3xl font-semibold text-text leading-tight mb-2">
+    <h1 class="font-serif font-semibold text-text text-[2rem] sm:text-4xl leading-[1.05] tracking-[-0.04em] mb-2">
       {title}
     </h1>
     {formattedDate && (
-      <time class="text-text/50 text-sm" datetime={displayDate?.toISOString()}>
+      <time class="post-meta text-muted text-sm" datetime={displayDate?.toISOString()}>
         {formattedDate}
       </time>
     )}

@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import PostCard from '../../components/PostCard.astro';
+import ArchiveList from '../../components/ArchiveList.astro';
 import { getCollection } from 'astro:content';
 
 const posts = (await getCollection('memetics'))
@@ -15,26 +15,16 @@ const posts = (await getCollection('memetics'))
 ---
 
 <BaseLayout title="Memetics | Christopher Audretsch">
-  <div class="max-w-3xl mx-auto px-6 py-8 md:py-16">
-    <h1 class="font-serif text-3xl md:text-4xl font-semibold text-text mb-3 md:mb-4">Memetics</h1>
-    <p class="text-text/60 mb-8 md:mb-10">
+  <div class="max-w-reading mx-auto px-5 sm:px-6 py-10 md:py-14">
+    <h1 class="font-serif font-semibold text-text text-[2.4rem] tracking-[-0.045em] mb-2">Memetics</h1>
+    <p class="post-meta text-muted text-[1.05rem] mb-8">
       A sequence on memetics: the study of how ideas spread, evolve, and shape human behavior.
     </p>
 
     {posts.length === 0 ? (
-      <p class="text-text/60">No posts yet. Check back soon!</p>
+      <p class="text-muted">No posts yet. Check back soon!</p>
     ) : (
-      <div class="space-y-10">
-        {posts.map((post) => (
-          <PostCard
-            title={post.data.title}
-            href={`/memetics/${post.slug}`}
-            date={post.data.posted}
-            description={post.data.description}
-            tags={post.data.tags}
-          />
-        ))}
-      </div>
+      <ArchiveList base="/memetics" posts={posts} />
     )}
   </div>
 </BaseLayout>
