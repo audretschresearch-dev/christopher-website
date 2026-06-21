@@ -1,0 +1,16 @@
+---
+import TagPill from './TagPill.astro';
+
+interface Props {
+  tags?: string[];
+  class?: string;
+}
+
+const { tags, class: cls = '' } = Astro.props;
+---
+
+{tags && tags.length > 0 && (
+  <div class={`flex flex-wrap gap-1.5 ${cls}`}>
+    {tags.map((t) => <TagPill tag={t} />)}
+  </div>
+)}

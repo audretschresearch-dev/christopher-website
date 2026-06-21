@@ -4,6 +4,7 @@ posted: 2026-06-21T00:00:00.000Z
 description: "Why the consilience of evidence across many angles makes it look very likely that we live in some kind of intentionally designed 'simulation'."
 draft: false
 source: Google Docs
+tags: ["HQ"]
 ---
 
 *"There are more things in heaven and earth, Horatio, than are dreamt of in your philosophy."*

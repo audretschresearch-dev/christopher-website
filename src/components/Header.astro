@@ -1,14 +1,25 @@
 ---
 const currentPath = Astro.url.pathname;
 
-const navLinks = [
-  { href: '/', label: 'Home' },
+const writingLinks = [
   { href: '/blog', label: 'Miscellaneous Writing' },
   { href: '/memetics', label: 'Memetics' },
   { href: '/philosophy', label: 'Philosophy' },
+  { href: '/cyborg-evals', label: 'Cyborg Evals' },
+  { href: '/ai', label: 'AI' },
+  { href: '/trip-reports', label: 'Event Trip Reports' },
+  { href: '/reading-writing-list', label: 'Writing List' },
   { href: '/older', label: 'Older Writings' },
-  { href: '/about', label: 'About' },
 ];
+
+const isWritingActive = writingLinks.some(
+  (link) => currentPath === link.href || currentPath.startsWith(link.href)
+);
+
+const linkClass = (href: string) =>
+  currentPath === href || (href !== '/' && currentPath.startsWith(href))
+    ? 'text-accent'
+    : 'text-text/70 hover:text-text';
 ---
 
 <header class="bg-header-bg border-b border-gray-200">
@@ -19,22 +30,48 @@ const navLinks = [
       </a>
 
       <!-- Desktop nav -->
-      <ul class="hidden md:flex gap-6 lg:gap-8">
-        {navLinks.map((link) => (
-          <li>
-            <a
-              href={link.href}
-              class:list={[
-                'text-sm font-medium transition-colors',
-                currentPath === link.href || (link.href !== '/' && currentPath.startsWith(link.href))
-                  ? 'text-accent'
-                  : 'text-text/70 hover:text-text',
-              ]}
-            >
-              {link.label}
-            </a>
-          </li>
-        ))}
+      <ul class="hidden md:flex items-center gap-6 lg:gap-8">
+        <li>
+          <a href="/" class:list={['text-sm font-medium transition-colors', linkClass('/')]}>Home</a>
+        </li>
+
+        <!-- Writing dropdown -->
+        <li class="relative group">
+          <button
+            class:list={[
+              'text-sm font-medium transition-colors flex items-center gap-1',
+              isWritingActive ? 'text-accent' : 'text-text/70 hover:text-text',
+            ]}
+            aria-haspopup="true"
+          >
+            Writing
+            <svg class="w-3 h-3 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          <!-- bridge + menu: visible on hover/focus-within -->
+          <div class="absolute right-0 top-full pt-3 w-56 invisible opacity-0 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100 transition-opacity z-20">
+            <ul class="bg-background border border-gray-200 rounded-lg shadow-lg py-2">
+              {writingLinks.map((link) => (
+                <li>
+                  <a
+                    href={link.href}
+                    class:list={[
+                      'block px-4 py-2 text-sm font-medium transition-colors',
+                      linkClass(link.href),
+                    ]}
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </li>
+
+        <li>
+          <a href="/about" class:list={['text-sm font-medium transition-colors', linkClass('/about')]}>About</a>
+        </li>
       </ul>
 
       <!-- Mobile menu button -->
@@ -52,21 +89,27 @@ const navLinks = [
     <!-- Mobile nav -->
     <div id="mobile-menu" class="hidden md:hidden mt-4 pb-2">
       <ul class="flex flex-col gap-3">
-        {navLinks.map((link) => (
-          <li>
-            <a
-              href={link.href}
-              class:list={[
-                'block text-base font-medium transition-colors py-1',
-                currentPath === link.href || (link.href !== '/' && currentPath.startsWith(link.href))
-                  ? 'text-accent'
-                  : 'text-text/70 hover:text-text',
-              ]}
-            >
-              {link.label}
-            </a>
-          </li>
-        ))}
+        <li>
+          <a href="/" class:list={['block text-base font-medium transition-colors py-1', linkClass('/')]}>Home</a>
+        </li>
+        <li class="pt-1">
+          <span class="block text-xs font-semibold uppercase tracking-wide text-text/40 py-1">Writing</span>
+          <ul class="flex flex-col gap-2 pl-3 border-l-2 border-gray-200 mt-1">
+            {writingLinks.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  class:list={['block text-base font-medium transition-colors py-1', linkClass(link.href)]}
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </li>
+        <li class="pt-1">
+          <a href="/about" class:list={['block text-base font-medium transition-colors py-1', linkClass('/about')]}>About</a>
+        </li>
       </ul>
     </div>
   </div>

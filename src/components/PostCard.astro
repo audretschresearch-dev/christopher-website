@@ -1,12 +1,16 @@
 ---
+import TagList from './TagList.astro';
+
 interface Props {
   title: string;
   href: string;
   date?: Date;
   description?: string;
+  tags?: string[];
+  external?: boolean;
 }
 
-const { title, href, date, description } = Astro.props;
+const { title, href, date, description, tags, external } = Astro.props;
 
 const formattedDate = date
   ? date.toLocaleDateString('en-US', {
@@ -15,18 +19,21 @@ const formattedDate = date
       day: 'numeric',
     })
   : null;
+
+const linkAttrs = external ? { target: '_blank', rel: 'noopener noreferrer' } : {};
 ---
 
 <article class="group">
-  <a href={href} class="block">
+  <a href={href} class="block" {...linkAttrs}>
     <h3 class="font-serif text-xl font-medium text-text group-hover:text-accent transition-colors">
-      {title}
+      {title}{external && <span class="text-text/40 text-base font-normal"> ↗</span>}
     </h3>
     {formattedDate && (
       <time class="text-sm text-text/50 mt-1 block" datetime={date?.toISOString()}>
         {formattedDate}
       </time>
     )}
+    {tags && tags.length > 0 && <TagList tags={tags} class="mt-2" />}
     {description && (
       <p class="text-text/70 mt-2 line-clamp-2">{description}</p>
     )}

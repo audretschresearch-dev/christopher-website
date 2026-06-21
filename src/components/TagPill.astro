@@ -1,0 +1,18 @@
+---
+interface Props {
+  tag: string;
+}
+
+const { tag } = Astro.props;
+
+const styles: Record<string, string> = {
+  HQ: 'bg-accent/10 text-accent',
+  LQ: 'bg-header-bg text-text/50',
+  personal: 'bg-header-bg text-text/70',
+  private: 'bg-header-bg text-text/60',
+};
+
+const cls = styles[tag] ?? 'bg-header-bg text-text/70';
+---
+
+<span class={`text-xs px-2.5 py-0.5 rounded-full font-medium ${cls}`}>{tag}</span>
