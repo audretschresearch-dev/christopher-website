@@ -1,5 +1,5 @@
 ---
-title: "Disagreeing with Janus; Funding Philosophers"
+title: "Where I disagree with Janus; & a list of philosophical questions"
 posted: 2026-02-02T00:00:00.000Z
 source: Google Docs
 tags: ["HQ"]
