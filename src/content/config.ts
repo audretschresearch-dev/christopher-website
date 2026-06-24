@@ -1,43 +1,45 @@
 import { defineCollection, z } from 'astro:content';
 
-// Tags are stored without brackets (e.g. 'HQ'); brackets are display-only.
-const tag = z.enum(['HQ', 'LQ', 'personal', 'private']);
+// Tag vocabulary (typo-safe). Topic tags + meta/quality tags.
+// Keep this in sync with src/lib/tags.ts.
+const tag = z.enum([
+  // topic
+  'philosophy',
+  'ai',
+  'memetics',
+  'cyborg-evals',
+  'rationality',
+  'trip-reports',
+  'drugs',
+  'personal-life',
+  'writing',
+  // meta
+  'HQ',
+  'LQ',
+  'personal',
+  'private',
+]);
 
-// Shared schema for all public, date-sorted collections.
-const publicSchema = z.object({
-  title: z.string(),
-  posted: z.coerce.date(),
-  description: z.string().optional(),
-  draft: z.boolean().default(false),
-  source: z.string().optional(),
-  tags: z.array(tag).optional(),
-  // When set, the piece links out to this URL instead of rendering a body page.
-  externalUrl: z.string().url().optional(),
-});
-
-const blog = defineCollection({ type: 'content', schema: publicSchema });
-const older = defineCollection({ type: 'content', schema: publicSchema });
-const philosophy = defineCollection({ type: 'content', schema: publicSchema });
-const cyborgEvals = defineCollection({ type: 'content', schema: publicSchema });
-const ai = defineCollection({ type: 'content', schema: publicSchema });
-const tripReports = defineCollection({ type: 'content', schema: publicSchema });
-
-// Reading & Writing List: two sections driven by `listSection`.
-const readingList = defineCollection({
+// One pool of public posts, organized by tags.
+const posts = defineCollection({
   type: 'content',
-  schema: publicSchema.extend({
-    listSection: z.enum(['read', 'write']),
-  }),
-});
-
-// Memetics: numbered sequence + standalone essays. `part` is optional now.
-const memetics = defineCollection({
-  type: 'content',
-  schema: publicSchema.extend({
+  schema: z.object({
+    title: z.string(),
+    posted: z.coerce.date(),
+    description: z.string().optional(),
+    draft: z.boolean().default(false),
+    source: z.string().optional(),
+    tags: z.array(tag).optional(),
+    // When set, the post links OUT to this URL instead of rendering a body page.
+    externalUrl: z.string().url().optional(),
+    // Optional: ordering within the memetics sequence (parts 1, 2, 3...).
     part: z.number().optional(),
+    // Optional: 'write' marks the "things I want to write about" list item.
+    listSection: z.enum(['read', 'write']).optional(),
   }),
 });
 
+// Private, password-gated notes — unchanged, separate from the public pool.
 const notes = defineCollection({
   type: 'content',
   schema: z.object({
@@ -51,14 +53,4 @@ const notes = defineCollection({
   }),
 });
 
-export const collections = {
-  blog,
-  memetics,
-  older,
-  notes,
-  philosophy,
-  'cyborg-evals': cyborgEvals,
-  ai,
-  'trip-reports': tripReports,
-  'reading-writing-list': readingList,
-};
+export const collections = { posts, notes };

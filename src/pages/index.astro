@@ -3,35 +3,26 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
 import { getCollection } from 'astro:content';
 
-const posts = (await getCollection('blog'))
-  .filter((post) => !post.data.draft)
-  .sort((a, b) => b.data.posted.valueOf() - a.data.posted.valueOf())
-  .slice(0, 5);
+const all = (await getCollection('posts')).filter((p) => !p.data.draft);
+const bySlug = (slug) => all.find((p) => p.slug === slug);
 
-// Philosophy: show these, in this order, on the homepage.
+// Curated "shelves" — explicit featured slugs keep ordering intentional.
 const philosophyFeatured = [
   'ai-identity',
   'consilience-why-i-think-we-live-in-a-simulation',
   'epstein-and-my-world-model',
   'claudes-constitution-is-an-excellent-guide-for-humans-too',
 ];
-const allPhilosophy = (await getCollection('philosophy')).filter((p) => !p.data.draft);
-const philosophyPosts = philosophyFeatured
-  .map((slug) => allPhilosophy.find((p) => p.slug === slug))
-  .filter(Boolean);
+const philosophyPosts = philosophyFeatured.map(bySlug).filter(Boolean);
 
-// AI: show only these two on the homepage.
 const aiFeatured = [
   'toward-a-superphilosopher-ai',
   'disagreeing-with-janus-and-funding-philosophers',
 ];
-const allAi = (await getCollection('ai')).filter((p) => !p.data.draft);
-const aiPosts = aiFeatured
-  .map((slug) => allAi.find((p) => p.slug === slug))
-  .filter(Boolean);
+const aiPosts = aiFeatured.map(bySlug).filter(Boolean);
 
-const memeticsPosts = (await getCollection('memetics'))
-  .filter((post) => !post.data.draft)
+const memeticsPosts = all
+  .filter((p) => p.data.tags?.includes('memetics'))
   .sort((a, b) => {
     const ap = a.data.part, bp = b.data.part;
     if (ap != null && bp != null) return ap - bp;
@@ -41,8 +32,13 @@ const memeticsPosts = (await getCollection('memetics'))
   })
   .slice(0, 5);
 
-const cyborgPosts = (await getCollection('cyborg-evals'))
-  .filter((post) => !post.data.draft)
+const cyborgPosts = all
+  .filter((p) => p.data.tags?.includes('cyborg-evals'))
+  .sort((a, b) => b.data.posted.valueOf() - a.data.posted.valueOf())
+  .slice(0, 5);
+
+const recentPosts = all
+  .filter((p) => p.data.listSection !== 'write')
   .sort((a, b) => b.data.posted.valueOf() - a.data.posted.valueOf())
   .slice(0, 5);
 ---
@@ -76,19 +72,14 @@ const cyborgPosts = (await getCollection('cyborg-evals'))
           {philosophyPosts.map((post) => (
             <PostCard
               title={post.data.title}
-              href={`/philosophy/${post.slug}`}
+              href={`/writing/${post.slug}`}
               date={post.data.posted}
               description={post.data.description}
               tags={post.data.tags}
             />
           ))}
         </div>
-        <a
-          href="/philosophy"
-          class="inline-block mt-10 text-accent hover:underline"
-        >
-          View all &rarr;
-        </a>
+        <a href="/tags/philosophy" class="inline-block mt-10 text-accent hover:underline">View all &rarr;</a>
       </section>
     )}
 
@@ -99,19 +90,14 @@ const cyborgPosts = (await getCollection('cyborg-evals'))
           {aiPosts.map((post) => (
             <PostCard
               title={post.data.title}
-              href={`/ai/${post.slug}`}
+              href={`/writing/${post.slug}`}
               date={post.data.posted}
               description={post.data.description}
               tags={post.data.tags}
             />
           ))}
         </div>
-        <a
-          href="/ai"
-          class="inline-block mt-10 text-accent hover:underline"
-        >
-          View all &rarr;
-        </a>
+        <a href="/tags/ai" class="inline-block mt-10 text-accent hover:underline">View all &rarr;</a>
       </section>
     )}
 
@@ -122,19 +108,14 @@ const cyborgPosts = (await getCollection('cyborg-evals'))
           {memeticsPosts.map((post) => (
             <PostCard
               title={post.data.title}
-              href={`/memetics/${post.slug}`}
+              href={`/writing/${post.slug}`}
               date={post.data.posted}
               description={post.data.description}
               tags={post.data.tags}
             />
           ))}
         </div>
-        <a
-          href="/memetics"
-          class="inline-block mt-10 text-accent hover:underline"
-        >
-          View all &rarr;
-        </a>
+        <a href="/tags/memetics" class="inline-block mt-10 text-accent hover:underline">View all &rarr;</a>
       </section>
     )}
 
@@ -145,43 +126,32 @@ const cyborgPosts = (await getCollection('cyborg-evals'))
           {cyborgPosts.map((post) => (
             <PostCard
               title={post.data.title}
-              href={`/cyborg-evals/${post.slug}`}
+              href={`/writing/${post.slug}`}
               date={post.data.posted}
               description={post.data.description}
               tags={post.data.tags}
             />
           ))}
         </div>
-        <a
-          href="/cyborg-evals"
-          class="inline-block mt-10 text-accent hover:underline"
-        >
-          View all &rarr;
-        </a>
+        <a href="/tags/cyborg-evals" class="inline-block mt-10 text-accent hover:underline">View all &rarr;</a>
       </section>
     )}
 
     <section>
       <h2 class="font-serif text-xl md:text-2xl font-semibold text-text mb-6 md:mb-8">Recent Writing</h2>
       <div class="space-y-8">
-        {posts.map((post) => (
+        {recentPosts.map((post) => (
           <PostCard
             title={post.data.title}
-            href={`/blog/${post.slug}`}
+            href={post.data.externalUrl ?? `/writing/${post.slug}`}
+            external={!!post.data.externalUrl}
             date={post.data.posted}
             description={post.data.description}
             tags={post.data.tags}
           />
         ))}
       </div>
-      {posts.length > 0 && (
-        <a
-          href="/blog"
-          class="inline-block mt-10 text-accent hover:underline"
-        >
-          View all posts &rarr;
-        </a>
-      )}
+      <a href="/writing" class="inline-block mt-10 text-accent hover:underline">View all posts &rarr;</a>
     </section>
   </div>
 </BaseLayout>

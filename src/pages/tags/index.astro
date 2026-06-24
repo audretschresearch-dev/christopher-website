@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { TOPIC_TAGS, tagLabel } from '../../lib/tags';
+
+const posts = (await getCollection('posts')).filter((p) => !p.data.draft);
+
+const counts = TOPIC_TAGS
+  .map((t) => ({ tag: t, count: posts.filter((p) => p.data.tags?.includes(t)).length }))
+  .filter((x) => x.count > 0)
+  .sort((a, b) => b.count - a.count);
+---
+
+<BaseLayout title="Tags | Christopher Audretsch">
+  <div class="max-w-3xl mx-auto px-6 py-8 md:py-16">
+    <h1 class="font-serif text-3xl md:text-4xl font-semibold text-text mb-3 md:mb-4">Tags</h1>
+    <p class="text-text/60 mb-8 md:mb-10">
+      Browse writing by topic.
+    </p>
+
+    <div class="flex flex-wrap gap-3">
+      {counts.map(({ tag, count }) => (
+        <a
+          href={`/tags/${tag}`}
+          class="group inline-flex items-baseline gap-2 px-4 py-2 rounded-full bg-header-bg hover:bg-accent/10 transition-colors no-underline"
+        >
+          <span class="font-medium text-text group-hover:text-accent transition-colors">{tagLabel(tag)}</span>
+          <span class="text-sm text-text/40">{count}</span>
+        </a>
+      ))}
+    </div>
+  </div>
+</BaseLayout>

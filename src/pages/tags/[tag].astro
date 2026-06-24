@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+import { TOPIC_TAGS, tagLabel } from '../../lib/tags';
+
+export async function getStaticPaths() {
+  const posts = (await getCollection('posts')).filter((p) => !p.data.draft);
+  return TOPIC_TAGS
+    .filter((t) => posts.some((p) => p.data.tags?.includes(t)))
+    .map((t) => ({ params: { tag: t } }));
+}
+
+const { tag } = Astro.params;
+
+const memeticsSort = (a, b) => {
+  const ap = a.data.part, bp = b.data.part;
+  if (ap != null && bp != null) return ap - bp;
+  if (ap != null) return -1;
+  if (bp != null) return 1;
+  return b.data.posted.valueOf() - a.data.posted.valueOf();
+};
+const dateSort = (a, b) => b.data.posted.valueOf() - a.data.posted.valueOf();
+
+const posts = (await getCollection('posts'))
+  .filter((p) => !p.data.draft && p.data.tags?.includes(tag))
+  .sort(tag === 'memetics' ? memeticsSort : dateSort);
+---
+
+<BaseLayout title={`${tagLabel(tag)} | Christopher Audretsch`}>
+  <div class="max-w-3xl mx-auto px-6 py-8 md:py-16">
+    <p class="text-sm text-text/50 mb-2">
+      <a href="/tags" class="hover:text-accent transition-colors">Tags</a> /
+    </p>
+    <h1 class="font-serif text-3xl md:text-4xl font-semibold text-text mb-8 md:mb-10">{tagLabel(tag)}</h1>
+
+    {posts.length === 0 ? (
+      <p class="text-text/60">No posts yet.</p>
+    ) : (
+      <div class="space-y-10">
+        {posts.map((post) => (
+          <PostCard
+            title={post.data.title}
+            href={post.data.externalUrl ?? `/writing/${post.slug}`}
+            external={!!post.data.externalUrl}
+            date={post.data.posted}
+            description={post.data.description}
+            tags={post.data.tags}
+          />
+        ))}
+      </div>
+    )}
+  </div>
+</BaseLayout>

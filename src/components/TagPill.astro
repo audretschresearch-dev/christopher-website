@@ -1,18 +1,24 @@
 ---
+import { isMeta, tagLabel } from '../lib/tags';
+
 interface Props {
   tag: string;
 }
 
 const { tag } = Astro.props;
 
-const styles: Record<string, string> = {
-  HQ: 'bg-accent/10 text-accent',
-  LQ: 'bg-header-bg text-text/50',
-  personal: 'bg-header-bg text-text/70',
-  private: 'bg-header-bg text-text/60',
-};
+const meta = isMeta(tag);
+const label = tagLabel(tag);
 
-const cls = styles[tag] ?? 'bg-header-bg text-text/70';
+// Topic tags link to their tag page; HQ is a non-clickable accent badge.
+const pillClass = meta
+  ? 'bg-accent/10 text-accent'
+  : 'bg-header-bg text-text/70 hover:bg-accent/10 hover:text-accent';
+const base = 'inline-block text-xs px-2.5 py-0.5 rounded-full font-medium transition-colors';
 ---
 
-<span class={`text-xs px-2.5 py-0.5 rounded-full font-medium ${cls}`}>{tag}</span>
+{meta ? (
+  <span class={`${base} ${pillClass}`}>{label}</span>
+) : (
+  <a href={`/tags/${tag}`} class={`${base} ${pillClass} no-underline`}>{label}</a>
+)}

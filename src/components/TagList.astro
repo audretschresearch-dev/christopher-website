@@ -1,5 +1,6 @@
 ---
 import TagPill from './TagPill.astro';
+import { isTopic } from '../lib/tags';
 
 interface Props {
   tags?: string[];
@@ -7,10 +8,13 @@ interface Props {
 }
 
 const { tags, class: cls = '' } = Astro.props;
+
+// Show topic tags (clickable) + HQ (badge). Hide LQ/personal/private publicly.
+const visible = (tags ?? []).filter((t) => isTopic(t) || t === 'HQ');
 ---
 
-{tags && tags.length > 0 && (
+{visible.length > 0 && (
   <div class={`flex flex-wrap gap-1.5 ${cls}`}>
-    {tags.map((t) => <TagPill tag={t} />)}
+    {visible.map((t) => <TagPill tag={t} />)}
   </div>
 )}

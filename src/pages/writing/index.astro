@@ -1,0 +1,124 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+import { TOPIC_TAGS, tagLabel } from '../../lib/tags';
+
+const all = (await getCollection('posts')).filter((p) => !p.data.draft);
+
+// The "writing list" item is shown in its own callout, not the main feed.
+const writingList = all.filter((p) => p.data.listSection === 'write');
+const posts = all
+  .filter((p) => p.data.listSection !== 'write')
+  .sort((a, b) => b.data.posted.valueOf() - a.data.posted.valueOf());
+
+// Only show filter chips for topics that actually appear.
+const usedTopics = TOPIC_TAGS.filter((t) => posts.some((p) => p.data.tags?.includes(t)));
+---
+
+<BaseLayout title="Writing | Christopher Audretsch">
+  <div class="max-w-3xl mx-auto px-6 py-8 md:py-16">
+    <h1 class="font-serif text-3xl md:text-4xl font-semibold text-text mb-6 md:mb-8">Writing</h1>
+
+    <!-- Tag filter chips (progressive enhancement; all posts show if JS is off) -->
+    <div id="tag-filters" class="flex flex-wrap gap-2 mb-8" role="group" aria-label="Filter by tag">
+      <button
+        type="button"
+        data-tag="all"
+        aria-pressed="true"
+        class="filter-chip text-sm px-3 py-1.5 rounded-full bg-accent text-white transition-colors"
+      >
+        All
+      </button>
+      {usedTopics.map((t) => (
+        <button
+          type="button"
+          data-tag={t}
+          aria-pressed="false"
+          class="filter-chip text-sm px-3 py-1.5 rounded-full bg-header-bg text-text/70 hover:text-accent transition-colors"
+        >
+          {tagLabel(t)}
+        </button>
+      ))}
+    </div>
+
+    <div id="post-list" class="space-y-10">
+      {posts.map((post) => (
+        <div class="post-item" data-tags={(post.data.tags ?? []).join(' ')}>
+          <PostCard
+            title={post.data.title}
+            href={post.data.externalUrl ?? `/writing/${post.slug}`}
+            external={!!post.data.externalUrl}
+            date={post.data.posted}
+            description={post.data.description}
+            tags={post.data.tags}
+          />
+        </div>
+      ))}
+    </div>
+    <p id="empty-msg" class="hidden text-text/60 mt-4">No posts with that tag.</p>
+
+    {writingList.length > 0 && (
+      <section class="mt-16 pt-8 border-t border-gray-200">
+        <h2 class="font-serif text-xl md:text-2xl font-semibold text-text mb-2">Writing List</h2>
+        <p class="text-text/60 mb-6">Things I want to write about.</p>
+        <div class="space-y-6">
+          {writingList.map((post) => (
+            <PostCard
+              title={post.data.title}
+              href={post.data.externalUrl ?? `/writing/${post.slug}`}
+              external={!!post.data.externalUrl}
+              date={post.data.posted}
+              description={post.data.description}
+            />
+          ))}
+        </div>
+      </section>
+    )}
+  </div>
+
+  <script>
+    const filters = document.getElementById('tag-filters');
+    const items = Array.from(document.querySelectorAll('.post-item'));
+    const empty = document.getElementById('empty-msg');
+    let active = 'all';
+
+    function chipStyle(btn: Element, on: boolean) {
+      btn.classList.toggle('bg-accent', on);
+      btn.classList.toggle('text-white', on);
+      btn.classList.toggle('bg-header-bg', !on);
+      btn.classList.toggle('text-text/70', !on);
+    }
+
+    function apply() {
+      let shown = 0;
+      for (const el of items) {
+        const tags = (el.getAttribute('data-tags') || '').split(' ');
+        const show = active === 'all' || tags.includes(active);
+        el.classList.toggle('hidden', !show);
+        if (show) shown++;
+      }
+      empty?.classList.toggle('hidden', shown !== 0);
+    }
+
+    filters?.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      const btn = target.closest('button[data-tag]');
+      if (!btn) return;
+      active = btn.getAttribute('data-tag') || 'all';
+      filters.querySelectorAll('button[data-tag]').forEach((b) => {
+        const on = b === btn;
+        b.setAttribute('aria-pressed', String(on));
+        chipStyle(b, on);
+      });
+      apply();
+    });
+
+    // Deep link: /writing?tag=ai pre-selects a chip.
+    const q = new URLSearchParams(location.search).get('tag');
+    if (q) {
+      const b = filters?.querySelector(`button[data-tag="${q}"]`) as HTMLElement | null;
+      b?.click();
+    }
+  </script>
+</BaseLayout>
