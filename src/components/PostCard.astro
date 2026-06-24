@@ -20,13 +20,19 @@ const formattedDate = date
     })
   : null;
 
-const linkAttrs = external ? { target: '_blank', rel: 'noopener noreferrer' } : {};
+// Only treat as "external" (new tab + ↗) if it actually leaves the site.
+// An internal cross-link (e.g. to christopheraudretsch.com or a relative path)
+// should behave like a normal same-tab link.
+const isOffsite =
+  external && !!href && !/^\/|christopheraudretsch\.com/.test(href);
+
+const linkAttrs = isOffsite ? { target: '_blank', rel: 'noopener noreferrer' } : {};
 ---
 
 <article class="group">
   <a href={href} class="block" {...linkAttrs}>
     <h3 class="font-serif text-xl font-medium text-text group-hover:text-accent transition-colors">
-      {title}{external && <span class="text-text/40 text-base font-normal"> ↗</span>}
+      {title}{isOffsite && <span class="text-text/40 text-base font-normal"> ↗</span>}
     </h3>
     {formattedDate && (
       <time class="text-sm text-text/50 mt-1 block" datetime={date?.toISOString()}>

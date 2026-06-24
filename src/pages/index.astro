@@ -8,8 +8,9 @@ const posts = (await getCollection('blog'))
   .sort((a, b) => b.data.posted.valueOf() - a.data.posted.valueOf())
   .slice(0, 5);
 
-// Philosophy: show these three, in this order, on the homepage.
+// Philosophy: show these, in this order, on the homepage.
 const philosophyFeatured = [
+  'ai-identity',
   'consilience-why-i-think-we-live-in-a-simulation',
   'epstein-and-my-world-model',
   'claudes-constitution-is-an-excellent-guide-for-humans-too',
